@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
 
@@ -16,6 +16,14 @@
     >
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
@@ -60,7 +68,8 @@
         </h2>
 
         <p class="text-muted mb-0">
-            Track your weight, BMI, calorie intake and exercise activity over time.
+            Track your weight, BMI, calorie intake and
+            exercise activity over time.
         </p>
 
     </div>
@@ -239,7 +248,8 @@
         class="alert alert-info"
         th:if="${progressExists == false}"
     >
-        No progress records are available yet. Add your first record above.
+        No progress records are available yet.
+        Add your first record above.
     </div>
 
     <div th:if="${progressExists}">
@@ -362,7 +372,9 @@
                             Weight Progress
                         </h5>
 
-                        <canvas id="weightChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="weightChart"></canvas>
+                        </div>
 
                     </div>
 
@@ -380,7 +392,9 @@
                             BMI Progress
                         </h5>
 
-                        <canvas id="bmiChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="bmiChart"></canvas>
+                        </div>
 
                     </div>
 
@@ -398,7 +412,9 @@
                             Calorie Intake
                         </h5>
 
-                        <canvas id="calorieChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="calorieChart"></canvas>
+                        </div>
 
                     </div>
 
@@ -416,7 +432,9 @@
                             Exercise Minutes
                         </h5>
 
-                        <canvas id="exerciseChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="exerciseChart"></canvas>
+                        </div>
 
                     </div>
 
@@ -450,10 +468,18 @@
 
                         </thead>
 
-                        <tbody>
+                        <tbody id="progressTableBody">
 
                             <tr
+                                class="progress-data-row"
                                 th:each="progress : ${progressRecords}"
+                                th:attr="
+                                    data-date=${progress.progressDate},
+                                    data-weight=${progress.weight},
+                                    data-bmi=${progress.bmi},
+                                    data-calories=${progress.calorieIntake},
+                                    data-exercise=${progress.exerciseMinutes}
+                                "
                             >
 
                                 <td
@@ -524,109 +550,227 @@
     <small>© 2026 VitaLife AI</small>
 </footer>
 
-<script th:inline="javascript">
+<script>
+    document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-    const progressRecords =
-        /*[[${progressRecords}]]*/ [];
+                const progressRows =
+                        document.querySelectorAll(
+                                ".progress-data-row"
+                        );
 
-    const labels = progressRecords.map(
-        record => record.progressDate
+                if (progressRows.length === 0) {
+                    return;
+                }
+
+                if (typeof Chart === "undefined") {
+
+                    console.error(
+                            "Chart.js could not be loaded."
+                    );
+
+                    return;
+                }
+
+                const progressData =
+                        Array.from(progressRows).map(
+                                function (row) {
+
+                                    return {
+                                        date: row.dataset.date,
+                                        weight:
+                                                Number(
+                                                        row.dataset.weight
+                                                ),
+                                        bmi:
+                                                Number(
+                                                        row.dataset.bmi
+                                                ),
+                                        calories:
+                                                Number(
+                                                        row.dataset.calories
+                                                ),
+                                        exercise:
+                                                Number(
+                                                        row.dataset.exercise
+                                                )
+                                    };
+                                }
+                        );
+
+                progressData.sort(
+                        function (firstRecord, secondRecord) {
+
+                            return new Date(firstRecord.date)
+                                    - new Date(secondRecord.date);
+                        }
+                );
+
+                const labels =
+                        progressData.map(
+                                function (record) {
+                                    return record.date;
+                                }
+                        );
+
+                const weights =
+                        progressData.map(
+                                function (record) {
+                                    return record.weight;
+                                }
+                        );
+
+                const bmis =
+                        progressData.map(
+                                function (record) {
+                                    return record.bmi;
+                                }
+                        );
+
+                const calories =
+                        progressData.map(
+                                function (record) {
+                                    return record.calories;
+                                }
+                        );
+
+                const exerciseMinutes =
+                        progressData.map(
+                                function (record) {
+                                    return record.exercise;
+                                }
+                        );
+
+                createLineChart(
+                        "weightChart",
+                        "Weight (kg)",
+                        labels,
+                        weights
+                );
+
+                createLineChart(
+                        "bmiChart",
+                        "BMI",
+                        labels,
+                        bmis
+                );
+
+                createBarChart(
+                        "calorieChart",
+                        "Calories (kcal)",
+                        labels,
+                        calories
+                );
+
+                createBarChart(
+                        "exerciseChart",
+                        "Exercise Minutes",
+                        labels,
+                        exerciseMinutes
+                );
+            }
     );
 
-    const weights = progressRecords.map(
-        record => record.weight
-    );
+    function createLineChart(
+            canvasId,
+            datasetLabel,
+            labels,
+            values) {
 
-    const bmis = progressRecords.map(
-        record => record.bmi
-    );
+        const canvas =
+                document.getElementById(canvasId);
 
-    const calories = progressRecords.map(
-        record => record.calorieIntake
-    );
-
-    const exerciseMinutes = progressRecords.map(
-        record => record.exerciseMinutes
-    );
-
-    if (progressRecords.length > 0) {
+        if (!canvas) {
+            return;
+        }
 
         new Chart(
-            document.getElementById("weightChart"),
-            {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Weight (kg)",
-                        data: weights,
-                        borderWidth: 2,
-                        tension: 0.25
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            }
-        );
+                canvas,
+                {
+                    type: "line",
 
-        new Chart(
-            document.getElementById("bmiChart"),
-            {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "BMI",
-                        data: bmis,
-                        borderWidth: 2,
-                        tension: 0.25
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            }
-        );
+                    data: {
+                        labels: labels,
 
-        new Chart(
-            document.getElementById("calorieChart"),
-            {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Calories",
-                        data: calories,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            }
-        );
+                        datasets: [{
+                            label: datasetLabel,
+                            data: values,
+                            borderWidth: 3,
+                            tension: 0.25,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            fill: false
+                        }]
+                    },
 
-        new Chart(
-            document.getElementById("exerciseChart"),
-            {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Exercise Minutes",
-                        data: exerciseMinutes,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            }
-        );
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
 
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        },
+
+                        scales: {
+                            y: {
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                }
+        );
     }
 
+    function createBarChart(
+            canvasId,
+            datasetLabel,
+            labels,
+            values) {
+
+        const canvas =
+                document.getElementById(canvasId);
+
+        if (!canvas) {
+            return;
+        }
+
+        new Chart(
+                canvas,
+                {
+                    type: "bar",
+
+                    data: {
+                        labels: labels,
+
+                        datasets: [{
+                            label: datasetLabel,
+                            data: values,
+                            borderWidth: 1
+                        }]
+                    },
+
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        },
+
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                }
+        );
+    }
 </script>
 
 </body>
