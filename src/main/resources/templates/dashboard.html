@@ -305,6 +305,7 @@
                             Height:
 
                             <strong>
+
                                 <span
                                     th:text="${healthProfile.height}"
                                 >
@@ -312,6 +313,7 @@
                                 </span>
 
                                 cm
+
                             </strong>
 
                         </p>
@@ -321,6 +323,7 @@
                             Weight:
 
                             <strong>
+
                                 <span
                                     th:text="${healthProfile.weight}"
                                 >
@@ -328,6 +331,7 @@
                                 </span>
 
                                 kg
+
                             </strong>
 
                         </p>
@@ -404,6 +408,71 @@
                     >
                         View Progress
                     </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4 mt-1">
+
+        <div class="col-12">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <div
+                        class="row align-items-center"
+                    >
+
+                        <div class="col-lg-8">
+
+                            <span
+                                class="badge bg-success mb-3"
+                            >
+                                Google Gemini AI
+                            </span>
+
+                            <h4 class="text-success">
+                                Gemini AI Wellness Plan
+                            </h4>
+
+                            <p class="text-muted mb-lg-0">
+                                Generate personalised nutrition,
+                                exercise, supplement and lifestyle
+                                recommendations using your saved
+                                health profile and Google Gemini AI.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="col-lg-4 text-lg-end mt-3 mt-lg-0"
+                        >
+
+                            <a
+                                href="/ai-recommendation"
+                                class="btn btn-success btn-lg"
+                                th:if="${profileExists}"
+                            >
+                                Generate AI Recommendation
+                            </a>
+
+                            <a
+                                href="/health-profile"
+                                class="btn btn-warning btn-lg"
+                                th:unless="${profileExists}"
+                            >
+                                Complete Health Profile First
+                            </a>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
