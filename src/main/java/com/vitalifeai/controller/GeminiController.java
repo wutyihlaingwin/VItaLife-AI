@@ -10,6 +10,7 @@ package com.vitalifeai.controller;
  */
 
 
+
 import com.vitalifeai.entity.HealthProfile;
 import com.vitalifeai.service.GeminiService;
 import com.vitalifeai.service.HealthProfileService;
@@ -61,11 +62,10 @@ public class GeminiController {
             return "ai-recommendation";
         }
 
+        HealthProfile profile = optionalProfile.get();
+
         model.addAttribute("profileExists", true);
-        model.addAttribute(
-                "healthProfile",
-                optionalProfile.get()
-        );
+        model.addAttribute("healthProfile", profile);
 
         return "ai-recommendation";
     }
@@ -110,7 +110,6 @@ public class GeminiController {
                 "aiRecommendation",
                 aiRecommendation
         );
-
         model.addAttribute(
                 "recommendationGenerated",
                 true
@@ -136,24 +135,31 @@ public class GeminiController {
                Activity level: %s
                Health goal: %s
 
-               Structure the response using these headings:
+               Format the response using Markdown.
 
-               1. Health Summary
-               2. Nutrition Recommendations
-               3. Exercise Recommendations
-               4. Supplement Considerations
-               5. Lifestyle Recommendations
-               6. Weekly Action Plan
+               Use exactly these section headings:
 
-               Requirements:
-               - Use clear and supportive language.
-               - Keep the response practical and concise.
+               ## 1. Health Summary
+               ## 2. Nutrition Recommendations
+               ## 3. Exercise Recommendations
+               ## 4. Supplement Considerations
+               ## 5. Lifestyle Recommendations
+               ## 6. Weekly Action Plan
+
+               Formatting requirements:
+
+               - Use short paragraphs under Health Summary.
+               - Use bullet points for recommendations.
+               - Use bold text only for important labels or values.
+               - Do not use Markdown tables.
+               - Keep each recommendation practical and concise.
+               - Do not include a separate title before section 1.
                - Do not diagnose medical conditions.
-               - Do not claim that supplements treat diseases.
-               - Recommend consulting a qualified healthcare
-                 professional before starting supplements or
-                 making major health changes.
-               - Base the advice on general wellness guidance.
+               - Do not claim that supplements prevent or treat diseases.
+               - Clearly advise consulting a qualified healthcare
+                 professional before starting supplements or making
+                 major health changes.
+               - Base all advice on general wellness guidance.
                """
                 .formatted(
                         profile.getAge(),

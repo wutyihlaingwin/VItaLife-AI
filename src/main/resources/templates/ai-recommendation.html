@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
 
@@ -14,11 +14,70 @@
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
+
+    <style>
+        .ai-response {
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .ai-response h2 {
+            color: #198754;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .ai-response h2:first-child {
+            margin-top: 0;
+        }
+
+        .ai-response h3 {
+            color: #198754;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-response p {
+            margin-bottom: 1rem;
+        }
+
+        .ai-response ul {
+            padding-left: 1.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .ai-response li {
+            margin-bottom: 0.55rem;
+        }
+
+        .ai-response strong {
+            color: #212529;
+        }
+
+        .profile-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            height: 100%;
+        }
+
+        .loading-area {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
 
 <nav class="navbar bg-white shadow-sm">
+
     <div class="container">
 
         <a
@@ -47,11 +106,16 @@
         </div>
 
     </div>
+
 </nav>
 
 <div class="container py-5">
 
     <div class="mb-4">
+
+        <span class="badge bg-success mb-2">
+            Powered by Google Gemini AI
+        </span>
 
         <h2 class="fw-bold text-success mb-1">
             AI Wellness Recommendation
@@ -101,99 +165,127 @@
 
                     <div class="col-md-4">
 
-                        <p class="mb-1 text-muted">
-                            User
-                        </p>
+                        <div class="profile-item">
 
-                        <strong th:text="${userName}">
-                            VitaLife User
-                        </strong>
+                            <p class="mb-1 text-muted">
+                                User
+                            </p>
 
-                    </div>
+                            <strong th:text="${userName}">
+                                VitaLife User
+                            </strong>
 
-                    <div class="col-md-4">
-
-                        <p class="mb-1 text-muted">
-                            Age
-                        </p>
-
-                        <strong th:text="${healthProfile.age}">
-                            30
-                        </strong>
+                        </div>
 
                     </div>
 
                     <div class="col-md-4">
 
-                        <p class="mb-1 text-muted">
-                            Gender
-                        </p>
+                        <div class="profile-item">
 
-                        <strong th:text="${healthProfile.gender}">
-                            Female
-                        </strong>
+                            <p class="mb-1 text-muted">
+                                Age
+                            </p>
 
-                    </div>
+                            <strong th:text="${healthProfile.age}">
+                                30
+                            </strong>
 
-                    <div class="col-md-4">
-
-                        <p class="mb-1 text-muted">
-                            Height
-                        </p>
-
-                        <strong>
-
-                            <span th:text="${healthProfile.height}">
-                                170
-                            </span>
-
-                            cm
-
-                        </strong>
+                        </div>
 
                     </div>
 
                     <div class="col-md-4">
 
-                        <p class="mb-1 text-muted">
-                            Weight
-                        </p>
+                        <div class="profile-item">
 
-                        <strong>
+                            <p class="mb-1 text-muted">
+                                Gender
+                            </p>
 
-                            <span th:text="${healthProfile.weight}">
-                                70
-                            </span>
+                            <strong th:text="${healthProfile.gender}">
+                                Female
+                            </strong>
 
-                            kg
-
-                        </strong>
+                        </div>
 
                     </div>
 
                     <div class="col-md-4">
 
-                        <p class="mb-1 text-muted">
-                            Activity Level
-                        </p>
+                        <div class="profile-item">
 
-                        <strong
-                            th:text="${healthProfile.activityLevel}"
-                        >
-                            Moderately Active
-                        </strong>
+                            <p class="mb-1 text-muted">
+                                Height
+                            </p>
+
+                            <strong>
+
+                                <span th:text="${healthProfile.height}">
+                                    170
+                                </span>
+
+                                cm
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="profile-item">
+
+                            <p class="mb-1 text-muted">
+                                Weight
+                            </p>
+
+                            <strong>
+
+                                <span th:text="${healthProfile.weight}">
+                                    70
+                                </span>
+
+                                kg
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="profile-item">
+
+                            <p class="mb-1 text-muted">
+                                Activity Level
+                            </p>
+
+                            <strong
+                                th:text="${healthProfile.activityLevel}"
+                            >
+                                Moderately Active
+                            </strong>
+
+                        </div>
 
                     </div>
 
                     <div class="col-md-6">
 
-                        <p class="mb-1 text-muted">
-                            Health Goal
-                        </p>
+                        <div class="profile-item">
 
-                        <strong th:text="${healthProfile.goal}">
-                            Improve Fitness
-                        </strong>
+                            <p class="mb-1 text-muted">
+                                Health Goal
+                            </p>
+
+                            <strong th:text="${healthProfile.goal}">
+                                Improve Fitness
+                            </strong>
+
+                        </div>
 
                     </div>
 
@@ -218,11 +310,13 @@
                 </p>
 
                 <form
+                    id="recommendationForm"
                     action="/ai-recommendation/generate"
                     method="post"
                 >
 
                     <button
+                        id="generateButton"
                         type="submit"
                         class="btn btn-success btn-lg"
                     >
@@ -231,25 +325,76 @@
 
                 </form>
 
+                <div
+                    id="loadingArea"
+                    class="loading-area mt-4"
+                >
+
+                    <div
+                        class="spinner-border text-success"
+                        role="status"
+                    >
+                        <span class="visually-hidden">
+                            Loading
+                        </span>
+                    </div>
+
+                    <p class="text-muted mt-2 mb-0">
+                        Gemini AI is preparing your personalised
+                        wellness plan. Please wait.
+                    </p>
+
+                </div>
+
             </div>
 
         </div>
 
         <div
+            id="recommendationSection"
             class="card border-0 shadow-sm"
             th:if="${recommendationGenerated}"
         >
 
             <div class="card-body p-4 p-md-5">
 
-                <h4 class="text-success mb-3">
-                    Gemini AI Recommendation
-                </h4>
+                <div
+                    class="d-flex justify-content-between
+                           align-items-center mb-4"
+                >
+
+                    <div>
+
+                        <span class="badge bg-success mb-2">
+                            AI Generated
+                        </span>
+
+                        <h4 class="text-success mb-0">
+                            Gemini AI Recommendation
+                        </h4>
+
+                    </div>
+
+                    <a
+                        href="/ai-recommendation"
+                        class="btn btn-outline-success btn-sm"
+                    >
+                        Clear Result
+                    </a>
+
+                </div>
 
                 <div
-                    class="bg-light border rounded p-4"
-                    style="white-space: pre-wrap;"
+                    id="aiRecommendationText"
+                    class="d-none"
                     th:text="${aiRecommendation}"
+                >
+                    AI recommendation will appear here.
+                </div>
+
+                <div
+                    id="formattedRecommendation"
+                    class="ai-response bg-light border rounded p-4"
                 >
                     AI recommendation will appear here.
                 </div>
@@ -257,9 +402,11 @@
                 <div class="alert alert-info mt-4 mb-0">
 
                     <strong>Health notice:</strong>
-                    This information is for general wellness support
-                    and does not replace professional medical advice,
-                    diagnosis or treatment.
+                    This information is provided for general wellness
+                    support only. It does not replace professional
+                    medical advice, diagnosis or treatment. Consult a
+                    qualified healthcare professional before taking
+                    supplements or making major health changes.
 
                 </div>
 
@@ -272,8 +419,222 @@
 </div>
 
 <footer class="text-center text-muted py-4">
-    <small>© 2026 VitaLife AI</small>
+
+    <small>
+        © 2026 VitaLife AI
+    </small>
+
 </footer>
+
+<script>
+    const recommendationForm =
+            document.getElementById("recommendationForm");
+
+    const generateButton =
+            document.getElementById("generateButton");
+
+    const loadingArea =
+            document.getElementById("loadingArea");
+
+    if (recommendationForm) {
+
+        recommendationForm.addEventListener(
+                "submit",
+                function () {
+
+                    generateButton.disabled = true;
+                    generateButton.textContent =
+                            "Generating Recommendation...";
+
+                    loadingArea.style.display = "block";
+                }
+        );
+    }
+
+    const rawRecommendationElement =
+            document.getElementById("aiRecommendationText");
+
+    const formattedRecommendationElement =
+            document.getElementById("formattedRecommendation");
+
+    if (rawRecommendationElement
+            && formattedRecommendationElement) {
+
+        const rawMarkdown =
+                rawRecommendationElement.textContent.trim();
+
+        formattedRecommendationElement.innerHTML =
+                convertMarkdownToHtml(rawMarkdown);
+    }
+
+    function escapeHtml(text) {
+
+        return text
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+    }
+
+    function formatInlineMarkdown(text) {
+
+        return escapeHtml(text)
+                .replace(
+                        /\*\*(.+?)\*\*/g,
+                        "<strong>$1</strong>"
+                );
+    }
+
+    function convertMarkdownToHtml(markdown) {
+
+        if (!markdown) {
+            return "<p>No recommendation was returned.</p>";
+        }
+
+        const lines = markdown.split(/\r?\n/);
+
+        let html = "";
+        let listOpen = false;
+        let paragraphLines = [];
+
+        function closeList() {
+
+            if (listOpen) {
+                html += "</ul>";
+                listOpen = false;
+            }
+        }
+
+        function flushParagraph() {
+
+            if (paragraphLines.length > 0) {
+
+                html += "<p>"
+                        + formatInlineMarkdown(
+                                paragraphLines.join(" ")
+                        )
+                        + "</p>";
+
+                paragraphLines = [];
+            }
+        }
+
+        for (const originalLine of lines) {
+
+            const line = originalLine.trim();
+
+            if (line.length === 0) {
+
+                flushParagraph();
+                closeList();
+                continue;
+            }
+
+            if (line.startsWith("### ")) {
+
+                flushParagraph();
+                closeList();
+
+                html += "<h3>"
+                        + formatInlineMarkdown(
+                                line.substring(4)
+                        )
+                        + "</h3>";
+
+                continue;
+            }
+
+            if (line.startsWith("## ")) {
+
+                flushParagraph();
+                closeList();
+
+                html += "<h2>"
+                        + formatInlineMarkdown(
+                                line.substring(3)
+                        )
+                        + "</h2>";
+
+                continue;
+            }
+
+            if (line.startsWith("# ")) {
+
+                flushParagraph();
+                closeList();
+
+                html += "<h2>"
+                        + formatInlineMarkdown(
+                                line.substring(2)
+                        )
+                        + "</h2>";
+
+                continue;
+            }
+
+            if (line.startsWith("- ")
+                    || line.startsWith("* ")
+                    || line.startsWith("• ")) {
+
+                flushParagraph();
+
+                if (!listOpen) {
+                    html += "<ul>";
+                    listOpen = true;
+                }
+
+                html += "<li>"
+                        + formatInlineMarkdown(
+                                line.substring(2)
+                        )
+                        + "</li>";
+
+                continue;
+            }
+
+            const numberedItem =
+                    line.match(/^\d+\.\s+(.+)$/);
+
+            if (numberedItem) {
+
+                flushParagraph();
+
+                if (!listOpen) {
+                    html += "<ul>";
+                    listOpen = true;
+                }
+
+                html += "<li>"
+                        + formatInlineMarkdown(
+                                numberedItem[1]
+                        )
+                        + "</li>";
+
+                continue;
+            }
+
+            closeList();
+            paragraphLines.push(line);
+        }
+
+        flushParagraph();
+        closeList();
+
+        return html;
+    }
+
+    const recommendationSection =
+            document.getElementById("recommendationSection");
+
+    if (recommendationSection) {
+
+        recommendationSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+</script>
 
 </body>
 </html>

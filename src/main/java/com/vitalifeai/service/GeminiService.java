@@ -40,11 +40,11 @@ public class GeminiService {
                     .build();
 
             GenerateContentResponse response =
-        client.models.generateContent(
-                "gemini-3.6-flash",
-                prompt,
-                null
-        );
+                    client.models.generateContent(
+                            "gemini-3.6-flash",
+                            prompt,
+                            null
+                    );
 
             String generatedText = response.text();
 
