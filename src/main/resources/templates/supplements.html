@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Supplement Recommendations - VitaLife AI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar bg-white shadow-sm">
+    <div class="container">
+
+        <a
+            class="navbar-brand fw-bold text-success"
+            href="/dashboard"
+        >
+            VitaLife AI
+        </a>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="/dashboard"
+                class="btn btn-outline-success"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="/logout"
+                class="btn btn-outline-danger"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+</nav>
+
+<div class="container py-5">
+
+    <div class="mb-4">
+
+        <h2 class="fw-bold text-success mb-1">
+            Personalised Supplement Recommendations
+        </h2>
+
+        <p class="text-muted mb-0">
+            Generate supplement suggestions based on your
+            health profile and selected fitness goal.
+        </p>
+
+    </div>
+
+    <div
+        class="alert alert-success"
+        th:if="${param.generated}"
+    >
+        Your personalised supplement recommendations were generated successfully.
+    </div>
+
+    <div
+        class="alert alert-warning shadow-sm"
+        th:if="${profileExists == false}"
+    >
+
+        <h5 class="alert-heading">
+            Health profile required
+        </h5>
+
+        <p>
+            Complete your Health Profile before generating
+            personalised supplement recommendations.
+        </p>
+
+        <a
+            href="/health-profile"
+            class="btn btn-warning"
+        >
+            Complete Health Profile
+        </a>
+
+    </div>
+
+    <div th:if="${profileExists}">
+
+        <div
+            class="card border-0 shadow-sm mb-4"
+            th:if="${supplementExists == false}"
+        >
+
+            <div class="card-body p-4 text-center">
+
+                <h4 class="text-success">
+                    Generate Your Supplement Recommendations
+                </h4>
+
+                <p class="text-muted">
+
+                    Your current health goal is:
+
+                    <strong
+                        th:text="${healthProfile.goal}"
+                    >
+                        Improve Fitness
+                    </strong>
+
+                </p>
+
+                <form
+                    action="/supplements/generate"
+                    method="post"
+                >
+
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-lg"
+                    >
+                        Generate Supplement Recommendations
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div th:if="${supplementExists}">
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Health Goal
+                            </p>
+
+                            <h5
+                                class="text-success"
+                                th:text="${healthGoal}"
+                            >
+                                Improve Fitness
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Recommendations
+                            </p>
+
+                            <h5 class="text-success">
+
+                                <span
+                                    th:text="${#lists.size(supplements)}"
+                                >
+                                    3
+                                </span>
+
+                                supplements
+
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div
+                    class="col-lg-4 col-md-6"
+                    th:each="supplement : ${supplements}"
+                >
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body p-4">
+
+                            <span class="badge bg-success mb-3">
+                                Recommended
+                            </span>
+
+                            <h4
+                                class="card-title text-success"
+                                th:text="${supplement.supplementName}"
+                            >
+                                Omega-3
+                            </h4>
+
+                            <p
+                                class="text-muted"
+                                th:text="${supplement.purpose}"
+                            >
+                                Supports cardiovascular health.
+                            </p>
+
+                            <hr>
+
+                            <p class="mb-2">
+
+                                <strong>Suggested dosage:</strong>
+
+                                <span
+                                    th:text="${supplement.dosage}"
+                                >
+                                    1000 mg daily
+                                </span>
+
+                            </p>
+
+                            <p class="mb-3">
+
+                                <strong>Best time to take:</strong>
+
+                                <span
+                                    th:text="${supplement.bestTimeToTake}"
+                                >
+                                    With lunch
+                                </span>
+
+                            </p>
+
+                            <div class="alert alert-light border mb-0">
+
+                                <strong>Important note:</strong>
+
+                                <span
+                                    th:text="${supplement.notes}"
+                                >
+                                    Take with food.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card border-0 shadow-sm mt-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <h5 class="text-success mb-1">
+                                Generate New Recommendations
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                This will replace your current supplement recommendations.
+                            </p>
+
+                        </div>
+
+                        <form
+                            action="/supplements/generate"
+                            method="post"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-success"
+                            >
+                                Regenerate Recommendations
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="alert alert-info border-0 shadow-sm mt-4">
+
+        <strong>Health notice:</strong>
+        These recommendations are general wellness suggestions and are not
+        medical advice. Users should consult a qualified healthcare professional
+        before starting supplements, especially when taking medication or
+        managing a medical condition.
+
+    </div>
+
+</div>
+
+<footer class="text-center text-muted py-4">
+    <small>© 2026 VitaLife AI</small>
+</footer>
+
+</body>
+</html>

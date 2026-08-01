@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Meal Planner - VitaLife AI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar bg-white shadow-sm">
+
+    <div class="container">
+
+        <a
+            class="navbar-brand fw-bold text-success"
+            href="/dashboard"
+        >
+            VitaLife AI
+        </a>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="/dashboard"
+                class="btn btn-outline-success"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="/logout"
+                class="btn btn-outline-danger"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold text-success mb-1">
+                Personalised Meal Planner
+            </h2>
+
+            <p class="text-muted mb-0">
+                Generate daily meal recommendations based on
+                your health profile, calorie needs and goal.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div
+        class="alert alert-success"
+        th:if="${param.generated}"
+    >
+        Your personalised meal plan was generated successfully.
+    </div>
+
+    <div
+        class="alert alert-warning shadow-sm"
+        th:if="${profileExists == false}"
+    >
+
+        <h5 class="alert-heading">
+            Health profile required
+        </h5>
+
+        <p>
+            Complete your Health Profile before generating
+            personalised meal recommendations.
+        </p>
+
+        <a
+            href="/health-profile"
+            class="btn btn-warning"
+        >
+            Complete Health Profile
+        </a>
+
+    </div>
+
+    <div th:if="${profileExists}">
+
+        <div
+            class="card border-0 shadow-sm mb-4"
+            th:if="${mealPlanExists == false}"
+        >
+
+            <div class="card-body p-4 text-center">
+
+                <h4 class="text-success">
+                    Generate Your Meal Plan
+                </h4>
+
+                <p class="text-muted">
+
+                    Your current health goal is:
+
+                    <strong
+                        th:text="${healthProfile.goal}"
+                    >
+                        Maintain Weight
+                    </strong>
+
+                </p>
+
+                <form
+                    action="/meal-planner/generate"
+                    method="post"
+                >
+
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-lg"
+                    >
+                        Generate Personalised Meal Plan
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div th:if="${mealPlanExists}">
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-3">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Health Goal
+                            </p>
+
+                            <h5
+                                class="text-success"
+                                th:text="${healthGoal}"
+                            >
+                                Maintain Weight
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Daily Calories
+                            </p>
+
+                            <h5 class="text-success">
+
+                                <span
+                                    th:text="${targetCalories}"
+                                >
+                                    2000
+                                </span>
+
+                                kcal
+
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Protein
+                            </p>
+
+                            <h5 class="text-success">
+
+                                <span
+                                    th:text="${totalProtein}"
+                                >
+                                    150
+                                </span>
+
+                                g
+
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Carbohydrates
+                            </p>
+
+                            <h5 class="text-success">
+
+                                <span
+                                    th:text="${totalCarbohydrates}"
+                                >
+                                    200
+                                </span>
+
+                                g
+
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body text-center">
+
+                            <p class="text-muted mb-1">
+                                Fat
+                            </p>
+
+                            <h5 class="text-success">
+
+                                <span
+                                    th:text="${totalFat}"
+                                >
+                                    67
+                                </span>
+
+                                g
+
+                            </h5>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div
+                    class="col-lg-3 col-md-6"
+                    th:each="meal : ${mealPlans}"
+                >
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body p-4">
+
+                            <span
+                                class="badge bg-success mb-3"
+                                th:text="${meal.mealType}"
+                            >
+                                Breakfast
+                            </span>
+
+                            <h5
+                                class="card-title"
+                                th:text="${meal.mealName}"
+                            >
+                                Oatmeal with banana
+                            </h5>
+
+                            <hr>
+
+                            <p class="mb-2">
+
+                                <strong>Calories:</strong>
+
+                                <span
+                                    th:text="${meal.calories}"
+                                >
+                                    400
+                                </span>
+
+                                kcal
+
+                            </p>
+
+                            <p class="mb-2">
+
+                                <strong>Protein:</strong>
+
+                                <span
+                                    th:text="${meal.protein}"
+                                >
+                                    30
+                                </span>
+
+                                g
+
+                            </p>
+
+                            <p class="mb-2">
+
+                                <strong>Carbohydrates:</strong>
+
+                                <span
+                                    th:text="${meal.carbohydrates}"
+                                >
+                                    40
+                                </span>
+
+                                g
+
+                            </p>
+
+                            <p class="mb-0">
+
+                                <strong>Fat:</strong>
+
+                                <span
+                                    th:text="${meal.fat}"
+                                >
+                                    15
+                                </span>
+
+                                g
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card border-0 shadow-sm mt-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+
+                            <h5 class="text-success mb-1">
+                                Generate a New Plan
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                This will replace your current meal plan.
+                            </p>
+
+                        </div>
+
+                        <form
+                            action="/meal-planner/generate"
+                            method="post"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-success"
+                            >
+                                Regenerate Meal Plan
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer class="text-center text-muted py-4">
+
+    <small>
+        © 2026 VitaLife AI
+    </small>
+
+</footer>
+
+</body>
+</html>

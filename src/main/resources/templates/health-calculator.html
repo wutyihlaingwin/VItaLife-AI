@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Health Calculator - VitaLife AI</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar bg-white shadow-sm">
+
+    <div class="container">
+
+        <a
+            class="navbar-brand fw-bold text-success"
+            href="/dashboard"
+        >
+            VitaLife AI
+        </a>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="/dashboard"
+                class="btn btn-outline-success"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="/logout"
+                class="btn btn-outline-danger"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="mb-4">
+
+                <h2 class="fw-bold text-success">
+                    BMI, BMR and TDEE Calculator
+                </h2>
+
+                <p class="text-muted">
+                    Calculate your body mass index, resting calorie
+                    requirement and estimated total daily energy expenditure.
+                </p>
+
+            </div>
+
+            <div
+                class="alert alert-warning"
+                th:if="${profileExists == false}"
+            >
+
+                No saved health profile was found. You can enter your
+                information manually or create a health profile first.
+
+                <div class="mt-3">
+
+                    <a
+                        href="/health-profile"
+                        class="btn btn-warning btn-sm"
+                    >
+                        Create Health Profile
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div
+                class="alert alert-danger"
+                th:if="${errorMessage}"
+                th:text="${errorMessage}"
+            >
+                Validation error
+            </div>
+
+            <div class="card border-0 shadow">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <form
+                        action="/health-calculator"
+                        method="post"
+                    >
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label
+                                    for="age"
+                                    class="form-label fw-semibold"
+                                >
+                                    Age
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="age"
+                                    name="age"
+                                    class="form-control"
+                                    placeholder="Enter your age"
+                                    min="16"
+                                    max="100"
+                                    required
+                                    th:value="${age}"
+                                >
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label
+                                    for="gender"
+                                    class="form-label fw-semibold"
+                                >
+                                    Gender
+                                </label>
+
+                                <select
+                                    id="gender"
+                                    name="gender"
+                                    class="form-select"
+                                    required
+                                >
+
+                                    <option
+                                        value=""
+                                        disabled
+                                        th:selected="${gender == null}"
+                                    >
+                                        Select gender
+                                    </option>
+
+                                    <option
+                                        value="Female"
+                                        th:selected="${gender == 'Female'}"
+                                    >
+                                        Female
+                                    </option>
+
+                                    <option
+                                        value="Male"
+                                        th:selected="${gender == 'Male'}"
+                                    >
+                                        Male
+                                    </option>
+
+                                    <option
+                                        value="Other"
+                                        th:selected="${gender == 'Other'}"
+                                    >
+                                        Other
+                                    </option>
+
+                                    <option
+                                        value="Prefer not to say"
+                                        th:selected="${gender == 'Prefer not to say'}"
+                                    >
+                                        Prefer not to say
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label
+                                    for="height"
+                                    class="form-label fw-semibold"
+                                >
+                                    Height
+                                </label>
+
+                                <div class="input-group">
+
+                                    <input
+                                        type="number"
+                                        id="height"
+                                        name="height"
+                                        class="form-control"
+                                        placeholder="Enter height"
+                                        min="100"
+                                        max="250"
+                                        step="0.1"
+                                        required
+                                        th:value="${height}"
+                                    >
+
+                                    <span class="input-group-text">
+                                        cm
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label
+                                    for="weight"
+                                    class="form-label fw-semibold"
+                                >
+                                    Weight
+                                </label>
+
+                                <div class="input-group">
+
+                                    <input
+                                        type="number"
+                                        id="weight"
+                                        name="weight"
+                                        class="form-control"
+                                        placeholder="Enter weight"
+                                        min="30"
+                                        max="300"
+                                        step="0.1"
+                                        required
+                                        th:value="${weight}"
+                                    >
+
+                                    <span class="input-group-text">
+                                        kg
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+
+                                <label
+                                    for="activityLevel"
+                                    class="form-label fw-semibold"
+                                >
+                                    Activity Level
+                                </label>
+
+                                <select
+                                    id="activityLevel"
+                                    name="activityLevel"
+                                    class="form-select"
+                                    required
+                                >
+
+                                    <option
+                                        value=""
+                                        disabled
+                                        th:selected="${activityLevel == null}"
+                                    >
+                                        Select activity level
+                                    </option>
+
+                                    <option
+                                        value="Sedentary"
+                                        th:selected="${activityLevel == 'Sedentary'}"
+                                    >
+                                        Sedentary – little or no exercise
+                                    </option>
+
+                                    <option
+                                        value="Lightly Active"
+                                        th:selected="${activityLevel == 'Lightly Active'}"
+                                    >
+                                        Lightly Active – exercise 1 to 3 days per week
+                                    </option>
+
+                                    <option
+                                        value="Moderately Active"
+                                        th:selected="${activityLevel == 'Moderately Active'}"
+                                    >
+                                        Moderately Active – exercise 3 to 5 days per week
+                                    </option>
+
+                                    <option
+                                        value="Very Active"
+                                        th:selected="${activityLevel == 'Very Active'}"
+                                    >
+                                        Very Active – exercise 6 to 7 days per week
+                                    </option>
+
+                                    <option
+                                        value="Extremely Active"
+                                        th:selected="${activityLevel == 'Extremely Active'}"
+                                    >
+                                        Extremely Active – intense daily exercise
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-grid">
+
+                            <button
+                                type="submit"
+                                class="btn btn-success btn-lg"
+                            >
+                                Calculate Results
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <div
+                class="card border-0 shadow mt-4"
+                th:if="${resultExists}"
+            >
+
+                <div class="card-body p-4 p-md-5">
+
+                    <h4 class="fw-bold text-success mb-4">
+                        Calculated Results
+                    </h4>
+
+                    <div class="row g-4">
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-4 text-center h-100">
+
+                                <h6 class="text-muted">
+                                    Body Mass Index
+                                </h6>
+
+                                <h2
+                                    class="text-success"
+                                    th:text="${bmi}"
+                                >
+                                    22.0
+                                </h2>
+
+                                <p
+                                    class="mb-0 fw-semibold"
+                                    th:text="${bmiCategory}"
+                                >
+                                    Normal weight
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-4 text-center h-100">
+
+                                <h6 class="text-muted">
+                                    Basal Metabolic Rate
+                                </h6>
+
+                                <h2 class="text-success">
+
+                                    <span th:text="${bmr}">
+                                        1380
+                                    </span>
+
+                                    <small class="fs-6">
+                                        kcal
+                                    </small>
+
+                                </h2>
+
+                                <p class="mb-0">
+                                    Calories required at rest
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="border rounded p-4 text-center h-100">
+
+                                <h6 class="text-muted">
+                                    Total Daily Energy Expenditure
+                                </h6>
+
+                                <h2 class="text-success">
+
+                                    <span th:text="${tdee}">
+                                        2139
+                                    </span>
+
+                                    <small class="fs-6">
+                                        kcal
+                                    </small>
+
+                                </h2>
+
+                                <p class="mb-0">
+                                    Estimated maintenance calories
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="alert alert-light border mt-4 mb-0">
+
+                        <strong>Calculation summary:</strong>
+
+                        Your BMI is
+
+                        <span th:text="${bmi}">
+                            22.0
+                        </span>,
+
+                        your estimated BMR is
+
+                        <span th:text="${bmr}">
+                            1380
+                        </span>
+
+                        kcal per day, and your estimated TDEE is
+
+                        <span th:text="${tdee}">
+                            2139
+                        </span>
+
+                        kcal per day.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer class="text-center text-muted py-4">
+
+    <small>
+        © 2026 VitaLife AI
+    </small>
+
+</footer>
+
+</body>
+</html>
